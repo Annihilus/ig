@@ -1,1 +1,85 @@
-<p>char works!</p>
+{{ !(loading$ | async) }}
+
+<ng-container *ngIf="!(loading$ | async)">
+
+  {{ char.name }}
+
+  <span>Total price: {{ total }}</span>
+
+  <form [formGroup]="statsForm">
+
+    <div class="stat">
+      <label class="name">ST</label>
+      <span class="value">
+        <input formControlName="str" type="text">
+      </span>
+    </div>
+    <div class="stat">
+      <label class="name">DX</label>
+      <span class="value">
+        <input formControlName="dex" type="text">
+      </span>
+    </div>
+    <div class="stat">
+      <label class="name">IQ</label>
+      <span class="value">
+        <input formControlName="int" type="text">
+      </span>
+    </div>
+    <div class="stat">
+      <label class="name">HT</label>
+      <span class="value">
+        <input formControlName="hlt" type="text">
+      </span>
+    </div>
+    <div class="stat">
+      <label class="name">Will</label>
+      <span class="value">
+        <input id="will" formControlName="will" type="text">
+      </span>
+
+
+    </div>
+    <div class="stat">
+      <label class="name">Per</label>
+      <span class="value">
+        <input formControlName="per" type="text">
+      </span>
+    </div>
+    <div class="stat">
+      <label class="name">FP</label>
+      <span class="value">
+        <input formControlName="fp" type="text">
+      </span>
+    </div>
+    <div class="stat">
+      <label class="name">HP</label>
+      <span class="value">
+        <input formControlName="hp" type="text">
+      </span>
+    </div>
+
+    <div class="stat">
+      <label class="name">Basic speed</label>
+      <span class="value">
+        <input formControlName="bs" type="text">({{ basicSpeed }})
+      </span>
+    </div>
+
+    <div class="stat">
+      <label class="name">Basic movement</label>
+      <span class="value">
+        <input formControlName="bm" type="text">({{ basicSpeed }})
+      </span>
+    </div>
+
+  </form>
+
+</ng-container>
+
+
+
+
+<p>PAGE 1</p>
+
+

@@ -1,6 +1,5 @@
-<a routerLink="/chars" routerLinkActive="active">Chars List</a>
-<a routerLink="/char" routerLinkActive="active">Char</a>
+<app-nav></app-nav>
 
-<div [@routeAnimations]="prepareRoute(outlet)" >
+<div class="layout" [@routeAnimations]="prepareRoute(outlet)" >
   <router-outlet #outlet="outlet"></router-outlet>
 </div>
