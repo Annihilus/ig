@@ -6,87 +6,101 @@
 
   <span>Total price: {{ total }}</span>
 
-  <form [formGroup]="statsForm">
+  <form [formGroup]="statsForm" class="statsForm">
 
-    <div class="stat">
-      <label class="name">ST</label>
-      <span class="value">
-        <input formControlName="str" type="text">
-      </span>
-    </div>
-    <div class="stat">
-      <label class="name">DX</label>
-      <span class="value">
-        <input formControlName="dex" type="text">
-      </span>
-    </div>
-    <div class="stat">
-      <label class="name">IQ</label>
-      <span class="value">
-        <input formControlName="int" type="text">
-      </span>
-    </div>
-    <div class="stat">
-      <label class="name">HT</label>
-      <span class="value">
-        <input formControlName="hlt" type="text">
-      </span>
-    </div>
-    <div class="stat">
-      <label class="name">Will</label>
-      <span class="value">
-        <input id="will" formControlName="will" type="text">
-      </span>
+    <div class="group">
+      <mat-form-field>
+        <mat-label floatLabel>Total points</mat-label>
+        <input matInput formControlName="total" required>
+      </mat-form-field>
 
-
-    </div>
-    <div class="stat">
-      <label class="name">Per</label>
-      <span class="value">
-        <input formControlName="per" type="text">
-      </span>
-    </div>
-    <div class="stat">
-      <label class="name">FP</label>
-      <span class="value">
-        <input formControlName="fp" type="text">
-      </span>
-    </div>
-    <div class="stat">
-      <label class="name">HP</label>
-      <span class="value">
-        <input formControlName="hp" type="text">
-      </span>
+      <mat-form-field>
+        <mat-label floatLabel>Available points</mat-label>
+        <input matInput formControlName="available" disabled readonly>
+      </mat-form-field>
     </div>
 
-    <div class="stat">
-      <label class="name">Basic speed</label>
-      <span class="value">
-        <input formControlName="bs" type="text">({{ basicSpeed }})
-      </span>
-    </div>
+    <mat-divider></mat-divider>
 
-    <div class="stat">
-      <label class="name">Basic movement</label>
-      <span class="value">
-        <input formControlName="bm" type="text">({{ basicSpeed }})
-      </span>
+    <div formGroupName="stats" class="group">
+
+      <mat-form-field>
+        <mat-label floatLabel>Strength</mat-label>
+        <input matInput formControlName="str" required>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label floatLabel>Dexterity</mat-label>
+        <input matInput formControlName="dex" required>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label floatLabel>Intelligence</mat-label>
+        <input matInput formControlName="int" required>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label floatLabel>Health</mat-label>
+        <input matInput formControlName="hlt" required>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label floatLabel>Will</mat-label>
+        <input matInput formControlName="will" required>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label floatLabel>Perception</mat-label>
+        <input matInput formControlName="per" required>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label floatLabel>FP</mat-label>
+        <input matInput formControlName="fp" required>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label floatLabel>HP</mat-label>
+        <input matInput formControlName="hp" required>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label floatLabel>Basic speed</mat-label>
+        <input matInput formControlName="bs" required>
+        <mat-hint>{{ basicSpeed }}</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label floatLabel>Basic movement</mat-label>
+        <input matInput formControlName="bm" required>
+        <mat-hint>{{ basicSpeed }}</mat-hint>
+      </mat-form-field>
+
     </div>
 
   </form>
 
-  <!-- <form [formGroup]="skillsForm"> -->
-    <div formArrayName="skills"
-      *ngFor="let skill of skillsForm.get('items').controls; let i = index;">
+  <button mat-button>TEST MATERIAL</button>
+
+  <mat-form-field>
+    <input matInput="test" type="text">
+  </mat-form-field>
+
+  <form [formGroup]="skillsForm">
+    <!-- <div
+      formArrayName="skills"
+      *ngFor="let skill of skillsForm.get('items').controls; let i = index;"
+    >
+
       <div [formGroupName]="i">
         <input formControlName="name" placeholder="Item name">
-        <!-- <input formControlName="description" placeholder="Item description"> -->
+        <input formControlName="description" placeholder="Item description">
         <input formControlName="value" placeholder="Item price">
       </div>
 
       Chosen name: {{ orderForm.controls.items.controls[i].controls.name.value }}
-    </div>
-  <!-- </form> -->
+    </div> -->
+  </form>
 
   <div class="skills">
     <div class="skill" *ngFor="let skill of skills">

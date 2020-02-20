@@ -19,9 +19,13 @@ export class CharComponent implements OnInit {
 
   public total: number | string;
 
+  public availablePoints: number;
+
   public statsForm: FormGroup;
 
   public skillsForm: FormGroup;
+
+  public skillsArray: FormArray;
 
   public basicSpeed: number;
 
@@ -29,7 +33,7 @@ export class CharComponent implements OnInit {
 
   public items;
 
-  public skillsList: ISkill[] = [
+  public skills: ISkill[] = [
     {
       displayName: 'Нож',
       name: 'knife',
@@ -52,6 +56,7 @@ export class CharComponent implements OnInit {
       .valueChanges()
       .subscribe((char: Char) => {
         this.char = char;
+        console.log(this.char);
         this.initForm();
 
         this.loading$.next(false);
@@ -59,8 +64,15 @@ export class CharComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.service.total$.subscribe(value => {
+    this.service.available$.subscribe(value => {
       this.total = value;
+      this.availablePoints = value;
+
+      if (this.statsForm) {
+        this.statsForm.get('available')
+          .setValue(value);
+      }
+
       this.cdr.markForCheck();
     });
 
@@ -72,30 +84,40 @@ export class CharComponent implements OnInit {
 
   public initSkillsForm() {
     this.skillsForm = this.builder.group({
-      skills: null,
+      skills: this.builder.array([]),
     });
+
+    this.addSkill(this.skills[0]);
   }
 
-  public addSkill() {
-    this.items = this.orderForm.get('items') as FormArray;
-    this.items.push(this.createItem());
+  public addSkill(skill) {
+    this.skillsArray = this.skillsForm.get('skills') as FormArray;
+    // this.skillsArray.push(this.builder.group({
+    //   name: ,
+    // });
   }
 
   public initForm() {
+    console.log(this.total);
+
     const stats = this.char.primaryStats;
     this.calcBasicMovement();
 
     this.statsForm = this.builder.group({
-      str: stats.str,
-      dex: stats.dex,
-      int: stats.int,
-      hlt: stats.hlt,
-      will: stats.will,
-      per: stats.per,
-      fp: stats.fp,
-      hp: stats.hp,
-      bs: this.movement.bs,
-      bm: this.movement.bm,
+      total: this.total,
+      available: this.availablePoints,
+      stats: this.builder.group({
+        str: stats.str,
+        dex: stats.dex,
+        int: stats.int,
+        hlt: stats.hlt,
+        will: stats.will,
+        per: stats.per,
+        fp: stats.fp,
+        hp: stats.hp,
+        bs: this.movement.bs,
+        bm: this.movement.bm,
+      })
     });
 
     this.service.calcTotal(this.char);
@@ -107,16 +129,19 @@ export class CharComponent implements OnInit {
         debounceTime(500),
       )
       .subscribe(() => {
-        const value = this.statsForm.getRawValue();
-
+        const value = this.statsForm.getRawValue().stats;
         this.char.primaryStats = value;
+
+        console.log(value);
 
         this.checkValidMovementParams(value);
         this.checkDependentStats(value);
 
         this.calcBasicMovement();
 
-        this.service.calcTotal(this.char);
+        this.service.calcPrimaryStats(this.char.primaryStats);
+
+        // this.service.calcAvailablePoints(1);
 
         this.cdr.markForCheck();
       });
@@ -169,7 +194,9 @@ export class CharComponent implements OnInit {
         val = this.basicSpeed + maxDiff;
         val = Math.floor(val / step) * step;
         this.char.primaryStats[param] = val;
-        this.statsForm.get(param)
+        this.statsForm
+          .get('stats')
+          .get(param)
           .setValue(val);
       }
     });
@@ -184,20 +211,11 @@ export class CharComponent implements OnInit {
 
     this.movement = {
       bs: stats.bs === null ? this.basicSpeed : stats.bs,
-      bm: stats.bm === null ? Math.floor(this.basicSpeed) : Math.floor(stats.bm)
+      bm: stats.bm === null ? Math.floor(this.basicSpeed) : Math.floor(stats.bm),
     };
 
     // TODO: remove movement variable
     this.char.primaryStats.bs = this.movement.bs;
     this.char.primaryStats.bm = this.movement.bm;
-  }
-
-  public parseErrors(errors) {
-    errors.forEach(error => {
-      this.statsForm.get(error.fieldName)
-        .setErrors({
-          diff: error.ammound,
-        });
-    });
   }
 }

@@ -6,9 +6,9 @@ import { Char, defaultChar, ISkill, PrimaryStats, statsParams } from './char.mod
 @Injectable()
 export class CharService {
 
-  private _total: BehaviorSubject<number> = new BehaviorSubject<number>(null);
+  private _available: BehaviorSubject<number> = new BehaviorSubject<number>(null);
 
-  public total$: Observable<number> = this._total.asObservable()
+  public available$: Observable<number> = this._available.asObservable()
     .pipe(
       distinctUntilChanged(),
     );
@@ -37,9 +37,14 @@ export class CharService {
       }
 
       result += value * statsParams[name].price;
+      console.log(name, value, '===', result);
     });
 
-    this._total.next(result);
+    this._available.next(result);
+  }
+
+  public calcAvailablePoints(total: number) {
+    return total - this._available.getValue();
   }
 
   public calcSkillPrice(skill: ISkill, attrVal: number) {

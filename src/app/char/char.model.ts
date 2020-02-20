@@ -17,7 +17,7 @@ export const statsParams = {
   },
   hp: {
     price: 2,
-    dep: 'str'
+    dep: 'hlt'
   },
   will: {
     price: 5,
@@ -30,13 +30,13 @@ export const statsParams = {
   bs: {
     type: 'movement',
     price: 5,
-    step: 0.25
+    step: 0.25,
   },
   bm: {
     type: 'movement',
     price: 5,
-    step: 1
-  }
+    step: 1,
+  },
 };
 
 export const defaultChar = {

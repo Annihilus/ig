@@ -4,10 +4,32 @@
   height: 100%;
 
   // background-color: aquamarine;
+
+  font-size: 16px;
 }
 
 .skills {
   padding: 20px;
 
   border: 1px solid #EEE;
+}
+
+.value {
+  width: 50px;
+}
+
+.statsForm {
+  width: 370px;
+}
+
+.group {
+  display: grid;
+  grid-template-columns: 180px 180px;
+  column-gap: 10px;
+
+  margin-top: 25px;
+}
+
+.test {
+  margin: 0 10px;
 }
