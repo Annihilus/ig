@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
-import { Char, defaultChar, PrimaryStats, Skill, statsParams } from './char.model';
+import { Char, defaultChar, ISkill, PrimaryStats, statsParams } from './char.model';
 
 @Injectable()
 export class CharService {
@@ -10,7 +10,7 @@ export class CharService {
 
   public total$: Observable<number> = this._total.asObservable()
     .pipe(
-      distinctUntilChanged()
+      distinctUntilChanged(),
     );
 
   public statsNames = Object.keys(statsParams);
@@ -42,38 +42,38 @@ export class CharService {
     this._total.next(result);
   }
 
-  public calcSkillPrice(char: Char, skill: Skill) {
-    const attrValue = char.primaryStats[skill.attr];
+  public calcSkillPrice(skill: ISkill, attrVal: number) {
     const complexities = ['E', 'M', 'H', 'VH'];
     const costStartsAt = [0, -1, -2, -3];
     const complexityModifier = costStartsAt[complexities.indexOf(skill.complexity)];
 
-    const diff = skill.value - attrValue;
+    const diff = skill.value - attrVal;
 
     let price = 0;
 
     if (diff < complexityModifier) {
       // If less then default value
-      return;
+      price = 0;
     }
 
     if (diff === complexityModifier) {
       price = 1;
-
-      return;
     }
 
     if (diff < 2 && diff > -2) {
       let exponent = Math.abs(Math.abs(diff) - complexityModifier);
       exponent = exponent ? exponent : 1;
       price = Math.pow(2, exponent);
-
-      return;
     }
 
-    const stepsFromDefault = diff + Math.abs(complexityModifier);
+    if (!price) {
+      const stepsFromDefault = diff + Math.abs(complexityModifier);
+      price = 4 * (stepsFromDefault - 1);
+    }
 
-    price = 4 * (stepsFromDefault - 1);
+    console.log(price);
+
+    return price;
   }
 
   public validate(stats: PrimaryStats) {

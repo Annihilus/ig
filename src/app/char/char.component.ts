@@ -1,17 +1,17 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 
+import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { FormGroup, FormBuilder } from '@angular/forms';
 
-import { defaultChar, Char, PrimaryStats, statsParams } from './char.model';
+import { Char, defaultChar, ISkill, PrimaryStats, statsParams } from './char.model';
 import { CharService } from './char.service';
 
 @Component({
   selector: 'app-char',
   templateUrl: './char.component.html',
-  styleUrls: ['./char.component.scss']
+  styleUrls: ['./char.component.scss'],
 })
 export class CharComponent implements OnInit {
 
@@ -21,9 +21,23 @@ export class CharComponent implements OnInit {
 
   public statsForm: FormGroup;
 
+  public skillsForm: FormGroup;
+
   public basicSpeed: number;
 
   public movement: any;
+
+  public items;
+
+  public skillsList: ISkill[] = [
+    {
+      displayName: 'Нож',
+      name: 'knife',
+      attr: 'dex',
+      complexity: 'M',
+      value: 10,
+    },
+  ];
 
   public loading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
@@ -31,23 +45,40 @@ export class CharComponent implements OnInit {
     private db: AngularFirestore,
     private builder: FormBuilder,
     private service: CharService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
-    db.collection('chars').doc('Inquisitor').valueChanges().subscribe((char: Char) => {
-      this.char = char;
-      this.initForm();
+    db.collection('chars')
+      .doc('Inquisitor')
+      .valueChanges()
+      .subscribe((char: Char) => {
+        this.char = char;
+        this.initForm();
 
-      this.loading$.next(false);
-    });
+        this.loading$.next(false);
+      });
   }
 
   ngOnInit() {
-    this.service.total$.subscribe((value) => {
+    this.service.total$.subscribe(value => {
       this.total = value;
       this.cdr.markForCheck();
     });
 
     this.initForm();
+    this.initSkillsForm();
+
+    // this.service.calcSkillPrice(this.skills[0], this.char.primaryStats[this.skills[0].attr]);
+  }
+
+  public initSkillsForm() {
+    this.skillsForm = this.builder.group({
+      skills: null,
+    });
+  }
+
+  public addSkill() {
+    this.items = this.orderForm.get('items') as FormArray;
+    this.items.push(this.createItem());
   }
 
   public initForm() {
@@ -64,7 +95,7 @@ export class CharComponent implements OnInit {
       fp: stats.fp,
       hp: stats.hp,
       bs: this.movement.bs,
-      bm: this.movement.bm
+      bm: this.movement.bm,
     });
 
     this.service.calcTotal(this.char);
@@ -73,7 +104,7 @@ export class CharComponent implements OnInit {
 
     this.statsForm.valueChanges
       .pipe(
-        debounceTime(500)
+        debounceTime(500),
       )
       .subscribe(() => {
         const value = this.statsForm.getRawValue();
@@ -108,7 +139,8 @@ export class CharComponent implements OnInit {
         const validValue = stats[dep] + maxDiff;
 
         this.char.primaryStats[param] = Math.floor(validValue);
-        this.statsForm.get(param).setValue(validValue);
+        this.statsForm.get(param)
+          .setValue(validValue);
       }
     });
   }
@@ -126,7 +158,8 @@ export class CharComponent implements OnInit {
 
       if (!!(val % step)) {
         val = Math.floor(val / step) * step;
-        this.statsForm.get(param).setValue(val);
+        this.statsForm.get(param)
+          .setValue(val);
       }
 
       const diff = val - this.basicSpeed;
@@ -136,7 +169,8 @@ export class CharComponent implements OnInit {
         val = this.basicSpeed + maxDiff;
         val = Math.floor(val / step) * step;
         this.char.primaryStats[param] = val;
-        this.statsForm.get(param).setValue(val);
+        this.statsForm.get(param)
+          .setValue(val);
       }
     });
   }
@@ -160,9 +194,10 @@ export class CharComponent implements OnInit {
 
   public parseErrors(errors) {
     errors.forEach(error => {
-      this.statsForm.get(error.fieldName).setErrors({
-        diff: error.ammound
-      });
+      this.statsForm.get(error.fieldName)
+        .setErrors({
+          diff: error.ammound,
+        });
     });
   }
 }

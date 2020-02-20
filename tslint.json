@@ -89,7 +89,6 @@
     "component-selector": [
       true,
       "element",
-      "iw",
       "kebab-case"
     ],
     "contextual-lifecycle": true,
@@ -101,7 +100,6 @@
     "directive-selector": [
       true,
       "attribute",
-      "iw",
       "camelCase"
     ],
     "encoding": true,

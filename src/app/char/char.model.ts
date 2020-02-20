@@ -87,13 +87,13 @@ export interface SkillDeps {
   modifier: number;
 }
 
-export interface Skill {
+export interface ISkill {
   name: string;
   displayName: string;
   attr: 'str' | 'dex' | 'int' | 'will' | 'hlt' | 'per';
   complexity: 'E' | 'M' | 'H' | 'VH';
-  deps: SkillDeps[];
-  desc: string;
+  deps?: SkillDeps[];
+  desc?: string;
   value?: number;
   price?: number;
 }
