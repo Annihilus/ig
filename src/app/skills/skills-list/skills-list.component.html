@@ -1,0 +1,5 @@
+<div [formGroup]="form">
+  <ng-container *ngFor="let item of data; let i = index;">
+    <skills-item [form]="form" [data]="item" [index]></skills-item>
+  </ng-container>
+</div>

@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 
-import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -23,40 +23,46 @@ export class CharComponent implements OnInit {
 
   public statsForm: FormGroup;
 
-  public skillsForm: FormGroup;
-
-  public skillsArray: FormArray;
-
   public basicSpeed: number;
 
   public movement: any;
 
-  public items;
-
-  public skills: ISkill[] = [
+  public skills = [
     {
-      displayName: 'Нож',
-      name: 'knife',
-      attr: 'dex',
-      complexity: 'M',
-      value: 10,
+      name: 'main-gauche',
+      displayName: 'Main-Gauche',
+      value: '15',
+      price: '2',
+      difficulty: 'M',
+      deps: ['dex'],
+      desc: 'test description',
+    },
+    {
+      name: 'sword',
+      displayName: 'Sword',
+      value: '12',
+      price: '4',
+      difficulty: 'M',
+      deps: ['dex', 'main-gauche'],
+      desc: 'sword description',
     },
   ];
+
+  public items;
 
   public loading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   constructor(
-    private db: AngularFirestore,
-    private builder: FormBuilder,
-    private service: CharService,
-    private cdr: ChangeDetectorRef,
+    private readonly db: AngularFirestore,
+    private readonly builder: FormBuilder,
+    private readonly service: CharService,
+    private readonly cdr: ChangeDetectorRef,
   ) {
     db.collection('chars')
       .doc('Inquisitor')
       .valueChanges()
       .subscribe((char: Char) => {
         this.char = char;
-        console.log(this.char);
         this.initForm();
 
         this.loading$.next(false);
@@ -64,10 +70,7 @@ export class CharComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.service.available$.subscribe(value => {
-      this.total = value;
-      this.availablePoints = value;
-
+    this.service.availablePoints$.subscribe(value => {
       if (this.statsForm) {
         this.statsForm.get('available')
           .setValue(value);
@@ -77,35 +80,15 @@ export class CharComponent implements OnInit {
     });
 
     this.initForm();
-    this.initSkillsForm();
-
-    // this.service.calcSkillPrice(this.skills[0], this.char.primaryStats[this.skills[0].attr]);
-  }
-
-  public initSkillsForm() {
-    this.skillsForm = this.builder.group({
-      skills: this.builder.array([]),
-    });
-
-    this.addSkill(this.skills[0]);
-  }
-
-  public addSkill(skill) {
-    this.skillsArray = this.skillsForm.get('skills') as FormArray;
-    // this.skillsArray.push(this.builder.group({
-    //   name: ,
-    // });
   }
 
   public initForm() {
-    console.log(this.total);
-
     const stats = this.char.primaryStats;
     this.calcBasicMovement();
 
     this.statsForm = this.builder.group({
-      total: this.total,
-      available: this.availablePoints,
+      total: this.char.points.total,
+      available: this.service.calcAvailablePoints(this.char.points.total),
       stats: this.builder.group({
         str: stats.str,
         dex: stats.dex,
@@ -117,10 +100,8 @@ export class CharComponent implements OnInit {
         hp: stats.hp,
         bs: this.movement.bs,
         bm: this.movement.bm,
-      })
+      }),
     });
-
-    this.service.calcTotal(this.char);
 
     this.cdr.markForCheck();
 
@@ -129,22 +110,28 @@ export class CharComponent implements OnInit {
         debounceTime(500),
       )
       .subscribe(() => {
-        const value = this.statsForm.getRawValue().stats;
-        this.char.primaryStats = value;
+        const value = this.statsForm.getRawValue();
+        this.char.primaryStats = value.stats;
 
-        console.log(value);
-
-        this.checkValidMovementParams(value);
-        this.checkDependentStats(value);
-
-        this.calcBasicMovement();
-
-        this.service.calcPrimaryStats(this.char.primaryStats);
-
-        // this.service.calcAvailablePoints(1);
-
-        this.cdr.markForCheck();
+        this.update(value);
       });
+  }
+
+  public update(value) {
+    const stats = value.stats;
+
+    this.checkValidMovementParams(stats);
+    this.checkDependentStats(stats);
+    this.calcBasicMovement();
+    this.service.calcPrimaryStats(stats);
+
+    this.statsForm.get('available')
+      .setValue(
+        this.service.calcAvailablePoints(value.total),
+        { emitEvent: false },
+      );
+
+    this.cdr.markForCheck();
   }
 
   public checkDependentStats(stats: PrimaryStats) {

@@ -8,6 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 import { environment } from 'src/environments/environment';
 
@@ -17,6 +18,8 @@ import { CharComponent } from './char/char.component';
 import { CharService } from './char/char.service';
 import { CharsComponent } from './chars/chars.component';
 import { NavComponent } from './nav/nav.component';
+import { SkillsItemComponent } from './skills/skills-item/skills-item.component';
+import { SkillsListComponent } from './skills/skills-list/skills-list.component';
 
 
 @NgModule({
@@ -25,6 +28,8 @@ import { NavComponent } from './nav/nav.component';
     CharsComponent,
     CharComponent,
     NavComponent,
+    SkillsListComponent,
+    SkillsItemComponent,
   ],
   imports: [
     BrowserModule,
@@ -36,6 +41,7 @@ import { NavComponent } from './nav/nav.component';
     MatButtonModule,
     MatInputModule,
     MatDividerModule,
+    MatSelectModule,
   ],
   providers: [
     AngularFirestore,

@@ -20,6 +20,8 @@
       </mat-form-field>
     </div>
 
+    <h3 class="mat-h3">Primary stats</h3>
+
     <mat-divider></mat-divider>
 
     <div formGroupName="stats" class="group">
@@ -73,7 +75,7 @@
       <mat-form-field>
         <mat-label floatLabel>Basic movement</mat-label>
         <input matInput formControlName="bm" required>
-        <mat-hint>{{ basicSpeed }}</mat-hint>
+        <mat-hint>{{ movement.bm }}</mat-hint>
       </mat-form-field>
 
     </div>
@@ -86,35 +88,8 @@
     <input matInput="test" type="text">
   </mat-form-field>
 
-  <form [formGroup]="skillsForm">
-    <!-- <div
-      formArrayName="skills"
-      *ngFor="let skill of skillsForm.get('items').controls; let i = index;"
-    >
-
-      <div [formGroupName]="i">
-        <input formControlName="name" placeholder="Item name">
-        <input formControlName="description" placeholder="Item description">
-        <input formControlName="value" placeholder="Item price">
-      </div>
-
-      Chosen name: {{ orderForm.controls.items.controls[i].controls.name.value }}
-    </div> -->
-  </form>
-
-  <div class="skills">
-    <div class="skill" *ngFor="let skill of skills">
-      {{ skill.name }}
-    </div>
-  </div>
-
-
+  ====
+  <skills-list [data]="skills"></skills-list>
+  ====
 
 </ng-container>
-
-
-
-
-<p>PAGE 1</p>
-
-

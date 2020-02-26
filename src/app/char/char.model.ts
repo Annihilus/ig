@@ -1,31 +1,31 @@
 export const statsParams = {
   dex: {
-    price: 20
+    price: 20,
   },
   str: {
-    price: 10
+    price: 10,
   },
   int: {
-    price: 20
+    price: 20,
   },
   hlt: {
-    price: 10
+    price: 10,
   },
   fp: {
     price: 3,
-    dep: 'hlt'
+    dep: 'hlt',
   },
   hp: {
     price: 2,
-    dep: 'hlt'
+    dep: 'str',
   },
   will: {
     price: 5,
-    dep: 'int'
+    dep: 'int',
   },
   per: {
     price: 5,
-    dep: 'int'
+    dep: 'int',
   },
   bs: {
     type: 'movement',
@@ -41,7 +41,9 @@ export const statsParams = {
 
 export const defaultChar = {
   name: 'Character name',
-  points: 200,
+  points: {
+    total: 200,
+  },
   primaryStats: {
     dex: 10,
     fp: 10,
@@ -52,8 +54,8 @@ export const defaultChar = {
     str: 10,
     will: 10,
     bs: null,
-    bm: null
-  }
+    bm: null,
+  },
 };
 
 export interface Char {
@@ -64,7 +66,9 @@ export interface Char {
 
   };
   name: string;
-  points: number;
+  points: {
+    total: number;
+  };
   primaryStats: PrimaryStats;
   skills: number;
 }

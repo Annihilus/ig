@@ -6,18 +6,16 @@ import { Char, defaultChar, ISkill, PrimaryStats, statsParams } from './char.mod
 @Injectable()
 export class CharService {
 
-  private _available: BehaviorSubject<number> = new BehaviorSubject<number>(null);
+  private _spentPoints: number = 0;
 
-  public available$: Observable<number> = this._available.asObservable()
+  private readonly _availablePoints: BehaviorSubject<number> = new BehaviorSubject<number>(null);
+
+  public availablePoints$: Observable<number> = this._availablePoints.asObservable()
     .pipe(
       distinctUntilChanged(),
     );
 
   public statsNames = Object.keys(statsParams);
-
-  public calcTotal(char: Char): void {
-    this.calcPrimaryStats(char.primaryStats);
-  }
 
   public calcPrimaryStats(stats: PrimaryStats, total: number = 0): void {
     let result = total;
@@ -27,9 +25,11 @@ export class CharService {
       let value = dep ? stats[name] - stats[dep] : stats[name] - defaultChar.primaryStats[name];
 
       if (statsParams[name].type === 'movement') {
-        const basicSpeed = (Number(stats.hlt) + Number(stats.dex)) / 4;
+        let basicSpeed = (Number(stats.hlt) + Number(stats.dex)) / 4;
 
         if (stats[name] !== basicSpeed) {
+          basicSpeed = name === 'bm' ? Math.floor(basicSpeed) : basicSpeed;
+
           value = (stats[name] - basicSpeed) / statsParams[name].step;
         } else {
           value = 0;
@@ -40,11 +40,14 @@ export class CharService {
       console.log(name, value, '===', result);
     });
 
-    this._available.next(result);
+    this._spentPoints = result;
+
+    this._availablePoints
+      .next(this.calcAvailablePoints(total));
   }
 
-  public calcAvailablePoints(total: number) {
-    return total - this._available.getValue();
+  public calcAvailablePoints(total: number): number {
+    return total - this._spentPoints;
   }
 
   public calcSkillPrice(skill: ISkill, attrVal: number) {
