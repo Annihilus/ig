@@ -32,7 +32,7 @@ export class CharComponent implements OnInit {
       name: 'main-gauche',
       displayName: 'Main-Gauche',
       value: '15',
-      price: '2',
+      price: '0',
       difficulty: 'M',
       deps: ['dex'],
       desc: 'test description',
@@ -41,7 +41,7 @@ export class CharComponent implements OnInit {
       name: 'sword',
       displayName: 'Sword',
       value: '12',
-      price: '4',
+      price: '0',
       difficulty: 'M',
       deps: ['dex', 'main-gauche'],
       desc: 'sword description',
@@ -62,7 +62,9 @@ export class CharComponent implements OnInit {
       .doc('Inquisitor')
       .valueChanges()
       .subscribe((char: Char) => {
+        char.skills = this.skills as any;
         this.char = char;
+        this.service.char = char;
         this.initForm();
 
         this.loading$.next(false);

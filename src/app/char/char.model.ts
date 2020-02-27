@@ -70,7 +70,7 @@ export interface Char {
     total: number;
   };
   primaryStats: PrimaryStats;
-  skills: number;
+  skills: ISkill[];
 }
 
 export interface PrimaryStats {
@@ -94,9 +94,9 @@ export interface SkillDeps {
 export interface ISkill {
   name: string;
   displayName: string;
-  attr: 'str' | 'dex' | 'int' | 'will' | 'hlt' | 'per';
-  complexity: 'E' | 'M' | 'H' | 'VH';
-  deps?: SkillDeps[];
+  difficulty: 'E' | 'M' | 'H' | 'VH';
+  deps: string[];
+  dependency?: string;
   desc?: string;
   value?: number;
   price?: number;

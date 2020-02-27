@@ -1,5 +1,6 @@
 <div [formGroup]="form">
   <ng-container *ngFor="let item of data; let i = index;">
-    <skills-item [form]="form" [data]="item" [index]></skills-item>
+    <mat-divider></mat-divider>
+    <skills-item [form]="form" [data]="item" [index]="i"></skills-item>
   </ng-container>
 </div>

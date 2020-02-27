@@ -3,8 +3,12 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { Char, defaultChar, ISkill, PrimaryStats, statsParams } from './char.model';
 
+const PRIMARY_STATS = ['str', 'dex', 'int', 'will', 'hlt', 'per'];
+
 @Injectable()
 export class CharService {
+
+  public char: Char;
 
   private _spentPoints: number = 0;
 
@@ -50,10 +54,21 @@ export class CharService {
     return total - this._spentPoints;
   }
 
-  public calcSkillPrice(skill: ISkill, attrVal: number) {
+  public calcSkillPrice(skill: ISkill) {
+    let attrVal;
+
+    if (PRIMARY_STATS.indexOf(skill.dependency) !== -1) {
+      attrVal = this.char.primaryStats[skill.dependency];
+    } else {
+      const depSkill = this.char.skills.find(x => x.name === skill.dependency);
+
+      attrVal = depSkill.value;
+    }
+
+    // const attrVal = 0;
     const complexities = ['E', 'M', 'H', 'VH'];
     const costStartsAt = [0, -1, -2, -3];
-    const complexityModifier = costStartsAt[complexities.indexOf(skill.complexity)];
+    const complexityModifier = costStartsAt[complexities.indexOf(skill.difficulty)];
 
     const diff = skill.value - attrVal;
 
@@ -79,7 +94,9 @@ export class CharService {
       price = 4 * (stepsFromDefault - 1);
     }
 
-    console.log(price);
+    if (price < 0) {
+      price = 0;
+    }
 
     return price;
   }

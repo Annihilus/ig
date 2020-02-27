@@ -1,16 +1,20 @@
 <div [formGroup]="formGroup">
-  <h3 class="mat-h3">{{ data.name }}</h3>
-  <mat-form-field>
+  <h4 class="mat-h4">{{ data.name }}</h4>
+  <mat-form-field class="field">
+    <mat-select formControlName="dependency" placeholder="Dependency">
+      <mat-option *ngFor="let dependency of data.deps" [value]="dependency">{{ dependency }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="field">
     <mat-label floatLabel>Value</mat-label>
     <input matInput formControlName="value" required>
   </mat-form-field>
-  <mat-form-field>
+  <mat-form-field class="field">
     <mat-label floatLabel>Price</mat-label>
     <input matInput formControlName="price" readonly>
   </mat-form-field>
-  <!-- <mat-form-field>
-    <mat-select formControlName="dependency" placeholder="Dependency">
-      <mat-option *ngFor="let dependency of deps" [value]="dependency">{{ dependency }}</mat-option>
-    </mat-select>
-  </mat-form-field> -->
+  <mat-form-field class="field">
+    <mat-label floatLabel>Difficulty</mat-label>
+    <input matInput formControlName="difficulty" readonly>
+  </mat-form-field>
 </div>
