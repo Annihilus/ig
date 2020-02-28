@@ -1,8 +1,8 @@
 <div [formGroup]="formGroup">
-  <h4 class="mat-h4">{{ data.name }}</h4>
+  <h4 class="mat-h4">{{ skill.name }}</h4>
   <mat-form-field class="field">
     <mat-select formControlName="dependency" placeholder="Dependency">
-      <mat-option *ngFor="let dependency of data.deps" [value]="dependency">{{ dependency }}</mat-option>
+      <mat-option *ngFor="let dependency of skill.deps" [value]="dependency">{{ dependency }}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field class="field">

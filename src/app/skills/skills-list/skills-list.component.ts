@@ -20,12 +20,24 @@ export class SkillsListComponent implements OnInit {
 
   constructor(
     private readonly _builder: FormBuilder,
-    // private readonly _service: CharService,
+    private _service: CharService,
   ) {}
 
   ngOnInit() {
-    console.log(this.data);
-
     this.form = this._builder.array([]);
+
+    this.form.valueChanges
+      .subscribe(skills => {
+        this._service.char.skills = skills;
+
+
+        let totalPrice = 0;
+
+        skills.forEach(skill => {
+          totalPrice += skill.price;
+        });
+
+        console.log(totalPrice);
+      });
   }
 }

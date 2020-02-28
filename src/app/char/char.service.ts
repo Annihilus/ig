@@ -41,7 +41,6 @@ export class CharService {
       }
 
       result += value * statsParams[name].price;
-      console.log(name, value, '===', result);
     });
 
     this._spentPoints = result;
@@ -54,8 +53,21 @@ export class CharService {
     return total - this._spentPoints;
   }
 
+  public updateSkill(skill: ISkill) {
+    skill.price = this.calcSkillPrice(skill);
+
+    return skill;
+  }
+
   public calcSkillPrice(skill: ISkill) {
+    const complexities = ['E', 'M', 'H', 'VH'];
+    const costStartsAt = [0, -1, -2, -3];
+    const complexityModifier = costStartsAt[complexities.indexOf(skill.difficulty)];
     let attrVal;
+
+    if (!skill.dependency) {
+      skill.dependency = skill.deps[0];
+    }
 
     if (PRIMARY_STATS.indexOf(skill.dependency) !== -1) {
       attrVal = this.char.primaryStats[skill.dependency];
@@ -64,11 +76,6 @@ export class CharService {
 
       attrVal = depSkill.value;
     }
-
-    // const attrVal = 0;
-    const complexities = ['E', 'M', 'H', 'VH'];
-    const costStartsAt = [0, -1, -2, -3];
-    const complexityModifier = costStartsAt[complexities.indexOf(skill.difficulty)];
 
     const diff = skill.value - attrVal;
 

@@ -4,6 +4,7 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 
 import { CharService } from '../../char/char.service';
+import { ISkill } from 'src/app/char/char.model';
 
 @Component({
   selector: 'skills-item',
@@ -14,7 +15,7 @@ export class SkillsItemComponent implements OnInit {
 
   @Input() public form: FormArray;
 
-  @Input() public data: any;
+  @Input() public skill: any;
 
   @Input() public index: number;
 
@@ -26,35 +27,28 @@ export class SkillsItemComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log(this.data);
+    this.skill.price = this._service.calcSkillPrice(this.skill);
 
     this.formGroup = this._builder.group({
-      name: this.data.name,
-      value: this.data.value,
-      price: this.data.price,
-      dependency: this.data.deps[0],
-      description: this.data.desc,
-      difficulty: this.data.difficulty,
+      name: this.skill.name,
+      value: this.skill.value,
+      price: this.skill.price,
+      dependency: this.skill.deps[0],
+      description: this.skill.desc,
+      difficulty: this.skill.difficulty,
     });
-
-    console.log(this.formGroup);
 
     this.formGroup.valueChanges
       .pipe(
         debounceTime(777),
       )
       .subscribe(skill => {
-        console.log(skill);
-
-        const price = this._service.calcSkillPrice(skill);
+        const updatedSkill = this._service.updateSkill(skill);
         const control = this.formGroup.controls.price;
 
-        console.log(price, parseInt(control.value, 0));
-
-        if (price !== parseInt(control.value, 0)) {
-          control.setValue(price);
+        if (updatedSkill.price !== parseInt(control.value, 0)) {
+          control.setValue(updatedSkill.price);
         }
-
       });
 
     this.form.push(this.formGroup);
